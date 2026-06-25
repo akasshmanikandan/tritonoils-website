@@ -1,4 +1,4 @@
-server.js
+server.local.js
 package.json
 server-started.log
 server.err.log

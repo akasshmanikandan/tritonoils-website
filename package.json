@@ -1,14 +1,8 @@
 {
   "name": "triton-site",
   "version": "1.0.0",
-  "description": "Static site served by a simple Node server for Triton.",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "description": "Static site for Triton oils.",
+  "private": true,
   "author": "",
-  "license": "MIT",
-  "engines": {
-    "node": ">=16"
-  }
+  "license": "MIT"
 }
