@@ -347,13 +347,89 @@ function setupInteractions() {
     }
   });
 
-  document.querySelectorAll(".quote-form").forEach((form) => {
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const button = form.querySelector("button");
-      button.textContent = "Enquiry Ready to Send";
-      button.disabled = true;
-    });
+  document.querySelectorAll(".quote-form").forEach(setupContactForm);
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function getSelectedProducts() {
+  const selectedIds = JSON.parse(localStorage.getItem("tritonEnquiry") || "[]");
+  return selectedIds
+    .map((id) => products.find((product) => product.id === id)?.name)
+    .filter(Boolean);
+}
+
+function setFormStatus(form, type, message) {
+  let status = form.querySelector("[data-form-status]");
+  if (!status) {
+    status = document.createElement("p");
+    status.dataset.formStatus = "";
+    status.className = "form-status";
+    const button = form.querySelector("button[type='submit']");
+    form.insertBefore(status, button);
+  }
+
+  status.className = `form-status form-status-${type}`;
+  status.textContent = message;
+}
+
+function clearFormStatus(form) {
+  const status = form.querySelector("[data-form-status]");
+  if (status) status.remove();
+}
+
+function setupContactForm(form) {
+  form.setAttribute("novalidate", "");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearFormStatus(form);
+
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+    const name = String(payload.name || "").trim();
+    const email = String(payload.email || "").trim();
+    const message = String(payload.message || "").trim();
+    const button = form.querySelector("button[type='submit']");
+    const originalButtonContent = button.innerHTML;
+
+    if (!name || !email || !message) {
+      setFormStatus(form, "error", "Please complete your name, email, and message.");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setFormStatus(form, "error", "Please enter a valid email address.");
+      return;
+    }
+
+    payload.sourcePage = window.location.href;
+    payload.selectedProducts = getSelectedProducts();
+
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner" aria-hidden="true"></span> Sending...';
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+
+      form.reset();
+      setFormStatus(form, "success", "Message sent successfully!");
+    } catch {
+      setFormStatus(form, "error", "Something went wrong. Please try again.");
+    } finally {
+      button.disabled = false;
+      button.innerHTML = originalButtonContent;
+    }
   });
 }
 
