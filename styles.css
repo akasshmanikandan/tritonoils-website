@@ -61,7 +61,7 @@ a { color: inherit; text-decoration: none; }
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  min-width: 220px;
+  min-width: 250px;
 }
 
 .brand-mark {
@@ -74,6 +74,15 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 4px solid var(--orange);
   font-weight: 900;
   font-size: 24px;
+}
+
+.brand-logo-img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  background: white;
+  border: 1px solid rgba(14, 42, 71, 0.12);
+  box-shadow: 0 8px 18px rgba(14, 42, 71, 0.08);
 }
 
 .brand strong {
@@ -490,6 +499,7 @@ p { margin: 0; color: var(--muted); }
 }
 
 .footer-brand strong { color: white; }
+.footer-brand .brand-logo-img { width: 64px; height: 64px; }
 .footer-grid p { color: #aebdca; margin-top: 18px; }
 .footer-grid h3 { color: white; margin-bottom: 16px; font-size: 16px; }
 .footer-grid a:not(.brand):not(.btn) { display: block; color: #aebdca; margin-top: 8px; }
