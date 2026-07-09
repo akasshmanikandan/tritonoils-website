@@ -20,7 +20,7 @@ type VercelResponse = {
 };
 
 const TO_EMAIL = "support@tritonoils.com";
-const FROM_EMAIL = "Triton Marine Lubricants <noreply@tritonoils.com>";
+const FROM_EMAIL = "Triton Marine Lubricants <support@tritonoils.com>";
 const SUBJECT = "New Website Enquiry - Triton Marine Lubricants";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -112,6 +112,58 @@ function buildEmailHtml(payload: ContactPayload): string {
     </html>`;
 }
 
+function buildAutoReplyHtml(name: string): string {
+  return `
+    <!doctype html>
+    <html>
+      <body style="margin:0;padding:0;background:#f3f4f6;font-family:Arial,Helvetica,sans-serif;">
+        <table width="100%" cellspacing="0" cellpadding="0" style="padding:30px 0;">
+          <tr>
+            <td align="center">
+              <table width="600" cellspacing="0" cellpadding="0" style="background:#ffffff;border:1px solid #e5e7eb;">
+                <tr>
+                  <td style="background:#0e2a47;padding:24px;">
+                    <h1 style="margin:0;color:#ffffff;">Triton Marine Lubricants</h1>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding:30px;color:#374151;line-height:1.7;">
+                    <p>Dear <strong>${escapeHtml(name)}</strong>,</p>
+
+                    <p>Thank you for contacting <strong>Triton Marine Lubricants</strong>.</p>
+
+                    <p>We have successfully received your enquiry.</p>
+
+                    <p>Our team will review your request and respond as soon as possible during our business hours.</p>
+
+                    <p>If your enquiry is urgent, you may reply directly to this email.</p>
+
+                    <br>
+
+                    <p>
+                      Kind Regards,<br>
+                      <strong>Triton Marine Lubricants</strong><br>
+                      support@tritonoils.com
+                    </p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="background:#f9fafb;padding:16px;text-align:center;color:#6b7280;font-size:12px;">
+                    © Triton Marine Lubricants. All rights reserved.
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+  `;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Allow", "POST");
 
@@ -120,7 +172,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (!process.env.RESEND_API_KEY) {
-    console.error("RESEND_API_KEY is missing in the deployment environment.");
+    console.error("RESEND_API_KEY is missing.");
     return res.status(500).json({ error: "Email service is not configured" });
   }
 
@@ -145,12 +197,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    // Email to support
     await resend.emails.send({
       from: FROM_EMAIL,
       to: TO_EMAIL,
       replyTo: email,
       subject: SUBJECT,
-      html: buildEmailHtml(payload)
+      html: buildEmailHtml(payload),
+    });
+
+    // Automatic confirmation email to customer
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: "We've received your enquiry - Triton Marine Lubricants",
+      html: buildAutoReplyHtml(name),
     });
 
     return res.status(200).json({ ok: true });
