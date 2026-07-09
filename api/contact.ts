@@ -23,7 +23,19 @@ const TO_EMAIL = "support@tritonoils.com";
 const FROM_EMAIL = "Triton Marine Lubricants <support@tritonoils.com>";
 const SUBJECT = "New Website Enquiry - Triton Marine Lubricants";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resend: Resend | null = null;
+
+function getResendClient(): Resend {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is missing");
+  }
+
+  if (!resend) {
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
+
+  return resend;
+}
 
 function isRecord(value: unknown): value is ContactPayload {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -197,8 +209,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    const client = getResendClient();
+
     // Email to support
-    await resend.emails.send({
+    await client.emails.send({
       from: FROM_EMAIL,
       to: TO_EMAIL,
       replyTo: email,
@@ -207,7 +221,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     // Automatic confirmation email to customer
-    await resend.emails.send({
+    await client.emails.send({
       from: FROM_EMAIL,
       to: email,
       subject: "We've received your enquiry - Triton Marine Lubricants",
