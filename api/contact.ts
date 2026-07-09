@@ -20,7 +20,7 @@ type VercelResponse = {
 };
 
 const TO_EMAIL = "support@tritonoils.com";
-const FROM_EMAIL = "Triton Marine Lubricants <support@tritonoils.com>";
+const FROM_EMAIL = "Triton Marine Lubricants <noreply@tritonoils.com>";
 const SUBJECT = "New Website Enquiry - Triton Marine Lubricants";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
