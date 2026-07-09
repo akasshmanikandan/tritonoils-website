@@ -6,8 +6,8 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "lib": ["dom", "dom.iterable", "es2022"],
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "noEmit": true,
     "strict": true,
     "target": "es2022"
