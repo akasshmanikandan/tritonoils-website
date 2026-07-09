@@ -120,6 +120,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (!process.env.RESEND_API_KEY) {
+    console.error("RESEND_API_KEY is missing in the deployment environment.");
     return res.status(500).json({ error: "Email service is not configured" });
   }
 
@@ -153,7 +154,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     return res.status(200).json({ ok: true });
-  } catch {
+  } catch (error) {
+    console.error("Resend email send failed:", error);
     return res.status(500).json({ error: "Unable to send message" });
   }
 }
