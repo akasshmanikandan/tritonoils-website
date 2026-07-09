@@ -308,7 +308,7 @@ function renderProductDetail() {
       <div class="card-actions">
         <button class="btn btn-primary" type="button" data-add-product="${product.id}">Add to Enquiry</button>
         <a class="btn btn-ghost" href="contact.html#quote">Request Price</a>
-        <a class="btn btn-ghost" href="https://wa.me/910000000000">WhatsApp Enquiry</a>
+        <a class="btn btn-ghost" href="https://wa.me/971501915601">WhatsApp Enquiry</a>
       </div>
     </div>`;
 }
