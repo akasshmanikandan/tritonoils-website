@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Static site for Triton oils.",
   "private": true,
-  "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
